@@ -20,9 +20,15 @@ public class PhotoImporter : MonoBehaviour
     public Transform receiver;
 
 
+    public GameObject changingNameDropDown;
+
     string classeName;
     string path;
-    List<string> elevesNames;
+    public List<string> elevesNames;
+
+    public string currentName;
+
+   [SerializeField] private float timeBetweenEleves=0.2f;
 
     public void GetFile()
     {
@@ -109,6 +115,7 @@ public class PhotoImporter : MonoBehaviour
 
     private void SetElevesNames(string classeName)
     {
+
         elevesNames = new List<string>();
         foreach (Eleve e in GameManager.instance.eleves)
         {
@@ -153,7 +160,7 @@ public class PhotoImporter : MonoBehaviour
             Texture2D tex = new Texture2D(2, 2);
             tex.LoadImage(b);
             byte[] pngByte = tex.EncodeToPNG();
-            File.WriteAllBytes("D:\\UnityProjects\\JDRCBup\\Assets\\Sprites" + "\\3A_Eleve_" + i + ".png", pngByte);
+            File.WriteAllBytes("D:\\UnityProjects\\Jeu de role en classe\\DOCS" + "\\3A_Eleve_" + i + ".png", pngByte);
             Sprite img = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
 
             imageList.Add(img);
@@ -169,7 +176,7 @@ public class PhotoImporter : MonoBehaviour
             newImg.GetComponentInChildren<Image>().sprite = s;
             newImg.GetComponentInChildren<TextMeshProUGUI>().text = elevesNames[nameIndex];
             nameIndex++;
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(timeBetweenEleves);
         }
     }
 }

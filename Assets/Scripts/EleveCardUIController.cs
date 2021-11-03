@@ -11,6 +11,7 @@ public class EleveCardUIController : MonoBehaviour
     [SerializeField] TextMeshProUGUI classeText;
     [SerializeField] TextMeshProUGUI levelText;
     [SerializeField] TextMeshProUGUI xpText;
+    [SerializeField] Image playerImage;
 
     [SerializeField] Slider levelindicatorSlider;
 
@@ -32,6 +33,10 @@ public class EleveCardUIController : MonoBehaviour
         nameText.text = eleve.nom + " " + eleve.prenom;
         classeText.text = eleve.classe;
         levelText.text = eleve.level.ToString();
+        if(eleve.photo != null)
+        {
+            playerImage.sprite = eleve.photo;
+        }
 
         RefreshUi();
 
