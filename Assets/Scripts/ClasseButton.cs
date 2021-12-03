@@ -11,6 +11,7 @@ public class ClasseButton : MonoBehaviour
         string classeName = GetComponentInChildren<TMPro.TextMeshProUGUI>().text;
         Debug.Log(" classe " + classeName + "ajouté");
         UIController.instance.DisplayEleves(classeName);
+        GameManager.instance.currentClasse = classeName;
     }
 
 }

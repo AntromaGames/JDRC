@@ -1,30 +1,29 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    public List<Table> plan;
+
     public User currentUser;
 
     public List<Eleve> eleves;
 
-    public Eleve currentEleve { get; internal set; }
+    public Eleve currentEleve;
+
 
     public List<Competence> competences;
+    public List<Power> powers;
+
+    public string currentClasse;
 
     private void Awake()
     {
         MakeSingleton();
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        competences = LoadAndSave.instance.GetCompetences();
-
-        eleves = LoadAndSave.instance.GetElevesList();
-
     }
 
     private void MakeSingleton()
@@ -39,8 +38,29 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(this);
         }
     }
+    // Start is called before the first frame update
+    void Start()
+    {
+        competences = LoadAndSaveWithJSON.instance.GetCompetences();
+        powers = LoadAndSaveWithJSON.instance.GetPowers();
+        eleves = LoadAndSaveWithJSON.instance.GetEleveList();
+        plan = LoadAndSaveWithJSON.instance.GetTables();
+        currentUser = UserEdit.instance.user;
+    }
 
+    public void AddTableToPlan(Table table)
+    {
 
+        Debug.Log("Ajout d'une table au plan");
+        if(plan == null)
+        {
+            plan = new List<Table>();
+        }
+
+        table.index = plan.Count;
+        plan.Add(table);
+        LoadAndSaveWithJSON.instance.SaveTables(table);
+    }
     public void AddEleves(List<Eleve>  eleves)
     {
         if(competences != null)
@@ -58,9 +78,59 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+        if (powers != null)
+        {
+            foreach (Eleve e in eleves)
+            {
+                foreach (Power c in powers)
+                {
+                    if (c.niveau == e.niveau && !e.powers.Contains(c))
+                    {
+                        Debug.Log("power " + c.title + "ajouté à l'élève " + e.prenom);
+                        e.powers.Add(c);
+                    }
+                }
+            }
+        }
         eleves.AddRange(eleves);
     }
+    public void GivePowersToEleves()
+    {
+        if (powers != null)
+        {
+            foreach (Eleve e in eleves)
+            {
+                foreach (Power p in powers)
+                {
+                    if (p.niveau == e.niveau)
+                    {
 
+                        Debug.Log("powers " + p.title + "ajouté à l'élève " + e.prenom);
+                        if (e.powers == null)
+                        {
+                            e.powers = new List<Power>();
+
+                            Power po = new Power(p.title, p.description, p.level, p.niveau, p.isUsed);
+                            e.powers.Add(po);
+
+                        }
+                        else if (!e.powers.Contains(p))
+                        {
+
+                            Power po = new Power(p.title, p.description, p.level, p.niveau, p.isUsed);
+                            e.powers.Add(po);
+                        }
+                        else
+                        {
+                            return;
+                        }
+
+                    }
+
+                }
+            }
+        }
+    }
     public void GiveCompToEleves()
     {
         if (competences != null)
@@ -76,17 +146,16 @@ public class GameManager : MonoBehaviour
                         if(e.competences == null)
                         {
                             e.competences = new List<Competence>();
-                            e.competences.Add(c);
+                            Competence newComp = new Competence(c.title, c.description, c.niveau, c.value, c.maxValue);
+
+                            e.competences.Add(newComp);
                         }
                         else if(!e.competences.Contains(c))
                         {
-                            e.competences.Add(c);
-                        }
-                        else
-                        {
-                            return;
-                        }
+                            Competence newComp = new Competence(c.title, c.description, c.niveau, c.value, c.maxValue);
 
+                            e.competences.Add(newComp);
+                        }
                     }
 
                 }

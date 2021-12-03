@@ -7,14 +7,15 @@ public class LoadScene : MonoBehaviour
 {
 
 
+    public void QuitGame()
+    {
+
+        Application.Quit();
+    }
     public void Load(string scene)
     {
         SceneManager.LoadScene(scene);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }

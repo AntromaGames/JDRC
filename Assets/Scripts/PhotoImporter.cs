@@ -12,23 +12,22 @@ using UnityEngine.UI;
 public class PhotoImporter : MonoBehaviour
 {
 
+    public List<GameObject> elevesPhotos;
+
     Texture mainTex;
     // Warning: paths returned by FileBrowser dialogs do not contain a trailing '\' character
     // Warning: FileBrowser can only show 1 dialog at a time
 
     public GameObject newimage;
     public Transform receiver;
-
-
-    public GameObject changingNameDropDown;
-
-    string classeName;
+    public string classeName;
     string path;
     public List<string> elevesNames;
 
     public string currentName;
 
    [SerializeField] private float timeBetweenEleves=0.2f;
+
 
     public void GetFile()
     {
@@ -137,6 +136,10 @@ public class PhotoImporter : MonoBehaviour
         PdfPageBase page = doc.Pages[0];
 
         Stream[] images = page.ExtractImages();
+        string pdfText = page.ExtractText();
+
+
+        Debug.Log("le texte sur le pdf est  " + pdfText);
         List<Sprite> imageList = new List<Sprite>();
 
         for (int i = 0; i < images.Length; i++)
@@ -160,7 +163,16 @@ public class PhotoImporter : MonoBehaviour
             Texture2D tex = new Texture2D(2, 2);
             tex.LoadImage(b);
             byte[] pngByte = tex.EncodeToPNG();
-            File.WriteAllBytes("D:\\UnityProjects\\Jeu de role en classe\\DOCS" + "\\3A_Eleve_" + i + ".png", pngByte);
+
+            string path = Application.dataPath + "/photos/" + classeName ;
+
+
+            //string completePath = Path.Combine(path, "\\3A_Eleve_" + i + ".png");
+            Directory.CreateDirectory(path);
+
+            string completePath = path + "/" + "_Eleve_" + i + ".png";
+            Debug.Log(" photos copiées sur  : " + completePath);
+            File.WriteAllBytes(completePath, pngByte);
             Sprite img = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
 
             imageList.Add(img);
@@ -174,9 +186,56 @@ public class PhotoImporter : MonoBehaviour
         {        
             GameObject newImg = Instantiate(newimage, receiver);
             newImg.GetComponentInChildren<Image>().sprite = s;
+            newImg.GetComponentInChildren<ChangingName>().photoPath = Application.dataPath + "/photos/" + classeName + "/" + "_Eleve_" + nameIndex + ".png";
             newImg.GetComponentInChildren<TextMeshProUGUI>().text = elevesNames[nameIndex];
+            newImg.name = elevesNames[nameIndex];
             nameIndex++;
             yield return new WaitForSeconds(timeBetweenEleves);
         }
+    }
+    public void ClearPhotoPanel()
+    {
+        foreach (Transform child in receiver.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+    }
+
+    public void ValidatePhotos()
+    {
+
+        //Compte le nombre de photos dans le panneau
+        int elevesAccount = receiver.childCount;
+        // Prend tous les gameobject du scrollview
+        elevesPhotos = new List<GameObject>();
+
+        for(int i = 0; i < elevesAccount; i++)
+        {
+            elevesPhotos.Add(receiver.GetChild(i).gameObject);
+        }
+        // Pour chaque objet  vérifier que la liste eleves contient le nom et si c est le cas assigner a l eleve la photo qui correspond
+
+        foreach(GameObject go in elevesPhotos)
+        {
+
+                foreach (Eleve e in GameManager.instance.eleves)
+                {
+               // Debug.Log("on compare  :" + e.prenom + " " + e.nom + "et ....." + go.name);
+                    if (e.prenom + " " + e.nom == go.GetComponentInChildren<TextMeshProUGUI>().text)
+                    {
+                        Debug.Log("photo: " + go.GetComponentInChildren<ChangingName>().photoPath + " ajoutée à  " + e.prenom + " " + e.nom);
+                        e.photo = go.GetComponentInChildren<Image>().sprite;
+                        e.photoPath = go.GetComponentInChildren<ChangingName>().photoPath;
+                    }
+
+                }
+            
+        }
+
+        foreach(Eleve e in GameManager.instance.eleves)
+        {
+            e.SetPicture();
+        }
+
     }
 }

@@ -67,7 +67,8 @@ public class CompetenceCreatorController : MonoBehaviour
         }
 
         GameManager.instance.GiveCompToEleves();
-        LoadAndSave.instance.SaveCompetence(comp);
+        LoadAndSaveWithJSON.instance.SaveCompetence(comp);
+        LoadAndSaveWithJSON.instance.SaveList();
 
     }
 }

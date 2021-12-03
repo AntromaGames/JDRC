@@ -4,13 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
+using System.IO;
 
 public class UserEdit : MonoBehaviour
 {
     Genre u_genre;
     string u_name, u_matiere, u_etablissement, u_firstName;
-    public User user; 
+    public User user;
+
+
+    public static UserEdit instance;
+
 
     [SerializeField] private GameObject firstTimePanel;
     [SerializeField] TMPro.TMP_InputField nom_Input;
@@ -24,15 +28,45 @@ public class UserEdit : MonoBehaviour
     [SerializeField] TMPro.TextMeshProUGUI notifText;
     [SerializeField] private float timeBetweenScenes = 3f;
 
+    private void Awake()
+    {
+        MakeSingleton();
+    }
+
+    private void MakeSingleton()
+    {
+        if (instance != null)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+            DontDestroyOnLoad(this);
+        }
+    }
+
     private void Start()
     {
-        if (PlayerPrefs.GetInt("firstTimeOpen") == 0) // Si l utilisateur ouvre pour la premiere fois  firsttimeopen = 0
+ 
+        //if (PlayerPrefs.GetInt("firstTimeOpen") == 0) // Si l utilisateur ouvre pour la premiere fois  firsttimeopen = 0
+        //{
+        //    OpenFirstTimePanel();
+        //}
+        //else // l'utilisateur a déjà ouvert l appli et a un compte user !
+        //{
+        //    user = LoadAndSave.instance.GetUser();
+        //    GameManager.instance.currentUser = user;
+        //    bienvenueName.text = user.firstName + " " + user.name;
+        //    StartCoroutine(nextScene());
+        //}
+        if (!File.Exists(Application.dataPath + @"\Save_User.csv")) // Si l utilisateur ouvre pour la premiere fois  firsttimeopen = 0
         {
             OpenFirstTimePanel();
         }
         else // l'utilisateur a déjà ouvert l appli et a un compte user !
         {
-            user = LoadAndSave.instance.GetUser();
+            user = LoadAndSaveWithJSON.instance.GetUser();
             GameManager.instance.currentUser = user;
             bienvenueName.text = user.firstName + " " + user.name;
             StartCoroutine(nextScene());
@@ -40,7 +74,7 @@ public class UserEdit : MonoBehaviour
     }
     private void OpenFirstTimePanel()
     {
-        PlayerPrefs.SetInt("firstTimeOpen", 1);
+        //PlayerPrefs.SetInt("firstTimeOpen", 1);
         firstTimePanel.SetActive(true);
     }
 
@@ -100,7 +134,7 @@ public class UserEdit : MonoBehaviour
             user = new User(u_genre, u_name, u_firstName, u_matiere, u_etablissement);
 
             SaveUserInPlayerPrefs(user);
-            GameManager.instance.currentUser = user;
+           // GameManager.instance.currentUser = user;
             if (u_genre == Genre.femme)
             {
                 bienvenueName.text = "Madame " + u_name;
@@ -114,7 +148,7 @@ public class UserEdit : MonoBehaviour
     }
     private void SaveUserInPlayerPrefs(User user)
     {
-        LoadAndSave.instance.SaveUser(user);
+        LoadAndSaveWithJSON.instance.SaveUser_JSON(user);
     }
 
 

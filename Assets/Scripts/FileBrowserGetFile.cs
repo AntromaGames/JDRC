@@ -120,27 +120,34 @@ public class FileBrowserGetFile : MonoBehaviour
             id = 0;
         }
 
-        for (int i = 1; i < strArray.Length-1 ; i++)
+        for (int i = 1; i < strArray.Length ; i++)
         {
             char[] separator2 = new char[] { ';' };
             string[] elevesInfos = strArray[i].Split(separator2);
             string fullName = elevesInfos[0];
-            string[] prenomNom = fullName.Split(' ');
-            string prenom = prenomNom[prenomNom.Length -1];
-            string nom = prenomNom[0];
-            prenom = prenom.Replace("\"", "");
-            nom = nom.Replace("\"", "");
-            Eleve currentEleve = new Eleve(prenom,nom,classeName,id,0,0,niveau);
-            Debug.Log("eleve ajouté en " + currentEleve.classe + " : " + currentEleve.nom);
-            elevesList.Add(currentEleve);
-            id++;
+            if (fullName != "")
+            {
+                string[] prenomNom = fullName.Split(' ');
+                string prenom = prenomNom[prenomNom.Length - 1];
+                string nom = prenomNom[0];
+                prenom = prenom.Replace("\"", "");
+                nom = nom.Replace("\"", "");
+                Eleve currentEleve = new Eleve(prenom, nom, classeName, id, 0, 1, niveau);
+                Debug.Log("eleve ajouté en " + currentEleve.classe + " : " + currentEleve.nom);
+                elevesList.Add(currentEleve);
+                id++;
+            }
+
         }
        // GameManager.instance.AddEleves(elevesList);
         GameManager.instance.eleves.AddRange(elevesList);
         GameManager.instance.GiveCompToEleves();
-        LoadAndSave.instance.SaveList();
+        GameManager.instance.GivePowersToEleves();
+        LoadAndSaveWithJSON.instance.SaveList();
         PlayerPrefs.SetInt("numberOfEleves", id);
     }
+
+
 }
 
 
