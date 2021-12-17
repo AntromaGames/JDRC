@@ -38,7 +38,7 @@ public class ClassroomMaker : MonoBehaviour
         TableController[] tables = FindObjectsOfType<TableController>();
         for(int i =0;i < tables.Length; i++)
         {
-            if(tables[i].gameObject.GetComponent<RectTransform>().localPosition.x >-300 && tables[i].gameObject.GetComponent<RectTransform>().localPosition.x < 240)
+            if(tables[i].gameObject.GetComponent<RectTransform>().localPosition.x >-300 && tables[i].gameObject.GetComponent<RectTransform>().localPosition.x < 280)
             {
                 Debug.Log("on sauvegarde la table ici ");
                 tables[i].SaveTable();
@@ -52,15 +52,44 @@ public class ClassroomMaker : MonoBehaviour
     }
     public void CreateNewSimpleTable()
     {
-       GameObject newTable= Instantiate(simpleTablePrefab, classRoomTrans);
-        newTable.transform.position = new Vector2(simpleTableTrans.position.x, simpleTableTrans.position.y);
+        int numberOfSimpleTable = 0;
+        foreach (Transform child in simpleTableTrans)
+        {
+            if(child.GetComponent<TableController>() != null && child.GetComponent<TableController>().isSimple)
+            {
+                Debug.Log("il y a deja une table ici");
+                numberOfSimpleTable++;
+            }
+        }
+
+
+        if (numberOfSimpleTable == 0)
+        {
+            GameObject newTable = Instantiate(simpleTablePrefab, simpleTableTrans);
+            newTable.transform.position = new Vector2(simpleTableTrans.position.x, simpleTableTrans.position.y);
+        }
+
 
     }
 
     public void CreateNewDoubleTable()
     {
-        GameObject newTable = Instantiate(doubleTablePrefab, classRoomTrans);
-        newTable.transform.position = new Vector2(doubleTableTrans.position.x, doubleTableTrans.position.y);
+
+        int numberOfDoubleTable = 0;
+        foreach (Transform child in doubleTableTrans)
+        {
+            if (child.GetComponent<TableController>() != null && !child.GetComponent<TableController>().isSimple)
+            {
+                Debug.Log("il y a deja une double table ici");
+                numberOfDoubleTable++;
+            }
+        }
+        if (numberOfDoubleTable == 0)
+        {
+            GameObject newTable = Instantiate(doubleTablePrefab, doubleTableTrans);
+            newTable.transform.position = new Vector2(doubleTableTrans.position.x, doubleTableTrans.position.y);
+        }
+
 
     }
 

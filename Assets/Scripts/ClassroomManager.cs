@@ -12,6 +12,8 @@ public class ClassroomManager : MonoBehaviour
 
     TableToFillManager[] tables;
 
+    public List<string> elevesDejaPlaces = new List<string>();
+
     private void Awake()
     {
         MakeSingleton();
@@ -40,9 +42,15 @@ public class ClassroomManager : MonoBehaviour
     public void TogglePlacement()
     {
         tables = FindObjectsOfType<TableToFillManager>();
-        for (int i = 0; i< tables.Length; i++)
+        for (int i = 0; i < tables.Length; i++)
         {
             tables[i].ToggleButtonVisibility(SetPlacement());
+        }
+        EleveButtonController[] elevesButtons = FindObjectsOfType<EleveButtonController>();
+
+        for (int i = 0; i < elevesButtons.Length; i++)
+        {
+            elevesButtons[i].ToggleInteractibility(SetPlacement());
         }
 
     }

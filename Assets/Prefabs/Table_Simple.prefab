@@ -294,7 +294,7 @@ MonoBehaviour:
     xPos: 0
     yPos: 0
     rotation: 0
-    issimple: 0
+    issimple: 1
   isSimple: 1
   selectColor: {r: 0.2362164, g: 0.8584906, b: 0.125534, a: 0.39607844}
   normalColor: {r: 1, g: 1, b: 1, a: 1}

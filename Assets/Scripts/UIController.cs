@@ -10,6 +10,8 @@ public class UIController : MonoBehaviour
     // singleton pattern for uicontroller
     public static UIController instance;
 
+
+    [Header("JDRC")]
     // Objects reference for the classes panel
     [SerializeField] private GameObject classeButtonPrefab;
     [SerializeField] private Transform classePanelTransform;
@@ -33,6 +35,7 @@ public class UIController : MonoBehaviour
     [SerializeField] Transform planTransfrom;
     [SerializeField] GameObject simpleTablePrefab, doubleTableprefab;
     public Transform dropTrans;
+
 
     // Start is called before the first frame update
     void Start()
@@ -141,7 +144,6 @@ public class UIController : MonoBehaviour
             tablesToFill.Add(tables[i]);
         }
         ClearPreviousNamesOnLeft();
-
         // Place les eleves dans la partie de gauche  ( scroll view )
         foreach (Eleve e in GameManager.instance.eleves)
         {
@@ -149,80 +151,121 @@ public class UIController : MonoBehaviour
             {
                 GameObject eleveButton = Instantiate(eleveButtonPrefab, eleveButtonPanelTransform);
                 eleveButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = e.prenom + " " + e.nom;
+
                 if (!string.IsNullOrEmpty(e.photoPath))
                 {
-                    byte[] b = File.ReadAllBytes(e.photoPath);
-                    Texture2D tex = new Texture2D(2, 2);
-                    tex.LoadImage(b);
-                    byte[] pngByte = tex.EncodeToPNG();
-                    eleveButton.GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+                    if (File.Exists(e.photoPath))
+                    {
+                        byte[] b = File.ReadAllBytes(e.photoPath);
+                        Texture2D tex = new Texture2D(2, 2);
+                        tex.LoadImage(b);
+                        byte[] pngByte = tex.EncodeToPNG();
+                        eleveButton.GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+                    }
+
+
                 }
                 elevesDansLeScroll.Add(eleveButton);
 
             }
         }
-
-
-
-        //Place les eleves dans la partie centrale s'ils ont une place déjà attitrée
-        foreach (Eleve e in elevesToPlace)
+        if (tablesToFill.Count == 0)
         {
-
-            if (e.table != 0)
+            WarningDiplayer.instance.DisplayText("vous devez d'abord établir un plan de classe avant de voir les élèves de voir vos élèves ( paramètre => plan de classe");
+        }
+        else
+        {
+            //Place les eleves dans la partie centrale s'ils ont une place déjà attitrée
+            foreach (Eleve e in elevesToPlace)
             {
 
-                TableToFillManager tableToFill = tablesToFill.Find(TableToFillManager => TableToFillManager.table.index == e.table);
-                GameObject eleveButton = Instantiate(eleveButtonPrefab, classRoomTransform);
-
-
-                DeleteeleveInScroill(e.prenom + " " + e.nom);
-
-                if (e.direction == ChaiseDirection.left)
+                if (e.table != 0)
                 {
-                    eleveButton.transform.SetParent(tableToFill.leftTransform);
-                    eleveButton.transform.localPosition = new Vector3(0, 0, 0);
-                    // SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-                    //eleveButton.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-                    //eleveButton.transform.SetPositionAndRotation(tableToFill.leftTransform.position, Quaternion.identity);
-                }
-                else if (e.direction == ChaiseDirection.right)
-                {
-                    eleveButton.transform.SetParent(tableToFill.rightTransform);
-                    eleveButton.transform.localPosition = new Vector3(0, 0, 0);
-                    // eleveButton.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-                    //eleveButton.transform.SetPositionAndRotation(tableToFill.rightTransform.position,Quaternion.identity);
-                }
-                else
-                {
-                    eleveButton.transform.SetParent(tableToFill.leftTransform);
-                }
 
-                // GameObject eleveButton = Instantiate(eleveButtonPrefab, tableToFill.currentTransform);
+                    TableToFillManager tableToFill = tablesToFill.Find(TableToFillManager => TableToFillManager.table.index == e.table);
+                    GameObject eleveButton = Instantiate(eleveButtonPrefab, classRoomTransform);
 
-                Debug.Log(e.nom + " va s assoir sur la table  " + tableToFill.table.index);
-                eleveButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = e.prenom + " " + e.nom;
-                if (!string.IsNullOrEmpty(e.photoPath))
-                {
-                    byte[] b = File.ReadAllBytes(e.photoPath);
-                    Texture2D tex = new Texture2D(2, 2);
-                    tex.LoadImage(b);
-                    byte[] pngByte = tex.EncodeToPNG();
-                    eleveButton.GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+                    //GameObject eleveInScroll = elevesDansLeScroll.Find(GameObject => GameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>().text == e.prenom + " " + e.nom);
+                    //if (eleveInScroll != null)
+                    //{
+                    //    DeleteeleveInScroill(e.prenom + " " + e.nom);
+                    //}
 
+
+                    if (e.direction == ChaiseDirection.left)
+                    {
+                        eleveButton.transform.SetParent(tableToFill.leftTransform);
+                        eleveButton.transform.localPosition = new Vector3(0, 0, 0);
+                        // SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                        //eleveButton.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                        //eleveButton.transform.SetPositionAndRotation(tableToFill.leftTransform.position, Quaternion.identity);
+                    }
+                    else if (e.direction == ChaiseDirection.right)
+                    {
+                        eleveButton.transform.SetParent(tableToFill.rightTransform);
+                        eleveButton.transform.localPosition = new Vector3(0, 0, 0);
+                        // eleveButton.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                        //eleveButton.transform.SetPositionAndRotation(tableToFill.rightTransform.position,Quaternion.identity);
+                    }
+                    else
+                    {
+                        eleveButton.transform.SetParent(tableToFill.leftTransform);
+                        eleveButton.transform.localPosition = new Vector3(0, 0, 0);
+                    }
+
+                    // GameObject eleveButton = Instantiate(eleveButtonPrefab, tableToFill.currentTransform);
+
+                    Debug.Log(e.nom + " va s assoir sur la table  " + tableToFill.table.index);
+                    eleveButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = e.prenom + " " + e.nom;
+                    if (!string.IsNullOrEmpty(e.photoPath))
+                    {
+                        if (File.Exists(e.photoPath))
+                        {
+                            byte[] b = File.ReadAllBytes(e.photoPath);
+                            Texture2D tex = new Texture2D(2, 2);
+                            tex.LoadImage(b);
+                            byte[] pngByte = tex.EncodeToPNG();
+                            eleveButton.GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+                        }
+
+
+                    }
                 }
             }
         }
+       
+
+
+
+       
 
 
     }
 
+    public void SaveListInJSONFIle()
+    {
+        LoadAndSaveWithJSON.instance.SaveList();
+    }
     private void ClearTables()
     {
         // Destroy all previous tables
-
         foreach (Transform go in planTransfrom)
         {
             Destroy(go.gameObject);
+        }
+    }
+
+    public void ResetPlaces()
+    {
+        TableToFillManager[] tables = FindObjectsOfType<TableToFillManager>();
+        for(int i = 0; i < tables.Length; i++)
+        {
+            List<Eleve> thisClasseList = GameManager.instance.eleves.FindAll(Eleve => Eleve.classe == GameManager.instance.currentClasse);
+            foreach(Eleve e in thisClasseList)
+            {
+                e.table = 0;
+            }
+            tables[i].ClearTable();
         }
     }
 

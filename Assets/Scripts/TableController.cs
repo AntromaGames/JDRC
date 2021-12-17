@@ -10,7 +10,7 @@ public class TableController : MonoBehaviour,IPointerDownHandler,IBeginDragHandl
 
     public Table table;
 
-    [SerializeField] bool isSimple;
+    public bool  isSimple;
 
     private Canvas canvas;
     private RectTransform rectTransform;
@@ -19,12 +19,13 @@ public class TableController : MonoBehaviour,IPointerDownHandler,IBeginDragHandl
     [SerializeField] Image image;
     [SerializeField] GameObject mooveSymbols, rotateSymbols;
 
-
+    Transform classeTrans;
     public enum MooveMode {Idle, Moove,Rotate}
     public MooveMode mooveMode;
 
     private void Awake()
     {
+        classeTrans = GameObject.Find("Classroom").transform;
         mooveMode = MooveMode.Idle;
         rectTransform = GetComponent<RectTransform>();
         canvas = GameObject.FindGameObjectWithTag("MainCanvas").GetComponent<Canvas>();
@@ -32,6 +33,7 @@ public class TableController : MonoBehaviour,IPointerDownHandler,IBeginDragHandl
     public void OnBeginDrag(PointerEventData eventData)
     {
         image.color= selectColor;
+        transform.SetParent(classeTrans);
     }
 
     private void SwitchMode()
@@ -82,7 +84,7 @@ public class TableController : MonoBehaviour,IPointerDownHandler,IBeginDragHandl
     public void OnEndDrag(PointerEventData eventData)
     {
         image.color = normalColor;
-
+        gameObject.tag = "Player";
         if (isSimple)
         {
             ClassroomMaker.instance.CreateNewSimpleTable();
@@ -95,18 +97,22 @@ public class TableController : MonoBehaviour,IPointerDownHandler,IBeginDragHandl
 
     public void SaveTable()
     {
-        float angle = 0;
-
-        Vector3 axis = new Vector3(0, 0, 0);
-
-        transform.localRotation.ToAngleAxis(out angle,out axis);
-        if( transform.rotation.z < 0)
+        if (gameObject.tag == "Player")
         {
-            angle = -angle;
+            float angle = 0;
+
+            Vector3 axis = new Vector3(0, 0, 0);
+
+            transform.localRotation.ToAngleAxis(out angle, out axis);
+            if (transform.rotation.z < 0)
+            {
+                angle = -angle;
+            }
+
+            table = new Table(1, rectTransform.anchoredPosition.x, rectTransform.anchoredPosition.y, angle, isSimple);
+            GameManager.instance.AddTableToPlan(table);
         }
 
-        table = new Table(0, rectTransform.anchoredPosition.x, rectTransform.anchoredPosition.y,angle,isSimple);
-        GameManager.instance.AddTableToPlan(table);
     }
 
     public void OnPointerDown(PointerEventData eventData)

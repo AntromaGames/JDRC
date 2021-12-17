@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using System.IO;
 
 public class EleveCardUIController : MonoBehaviour
 {
@@ -37,9 +38,18 @@ public class EleveCardUIController : MonoBehaviour
         nameText.text = eleve.nom + " " + eleve.prenom;
         classeText.text = eleve.classe;
         levelText.text = eleve.level.ToString();
-        if(eleve.photo != null)
+        if(!string.IsNullOrEmpty(eleve.photoPath) )
         {
-            playerImage.sprite = eleve.photo;
+
+            if (File.Exists(eleve.photoPath))
+            {
+                byte[] b = File.ReadAllBytes(eleve.photoPath);
+                Texture2D tex = new Texture2D(2, 2);
+                tex.LoadImage(b);
+                byte[] pngByte = tex.EncodeToPNG();
+                playerImage.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+            }
+
         }
         SetPowers(eleve);
         if (eleve.competences != null)
@@ -116,7 +126,7 @@ public class EleveCardUIController : MonoBehaviour
         CheckForLevelUpgrade(GameManager.instance.currentEleve.xp);
         CheckForPowerUpgrade();
         RefreshUi();
-        LoadAndSaveWithJSON.instance.SaveList();
+       // LoadAndSaveWithJSON.instance.SaveList();
 
     }
 

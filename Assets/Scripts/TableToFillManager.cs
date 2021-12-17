@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
@@ -37,6 +38,7 @@ public class TableToFillManager : MonoBehaviour
 
     public void ActivateRightDrop()
     {
+        CloseAllDrops();
         if (!isSimple)
         {
             rightDrop.gameObject.SetActive(true);
@@ -50,6 +52,7 @@ public class TableToFillManager : MonoBehaviour
     }
     public void ActivateLeftDrop()
     {
+        CloseAllDrops();
         leftDrop.gameObject.SetActive(true);
         leftDrop.transform.localPosition = new Vector3(-10, 0, 0);
         leftDrop.transform.Rotate(0, 0, -table.rotation,Space.Self);
@@ -59,6 +62,16 @@ public class TableToFillManager : MonoBehaviour
         currentTransform = leftTransform;
 
     }
+
+    private void CloseAllDrops()
+    {
+        TMP_Dropdown[] drops = FindObjectsOfType<TMP_Dropdown>();
+        for(int i =0; i < drops.Length; i++)
+        {
+            drops[i].gameObject.SetActive(false);
+        }
+    }
+
     private void Populate(TMP_Dropdown drop)
     {
 
@@ -71,8 +84,18 @@ public class TableToFillManager : MonoBehaviour
         {
             elevesNames.Add(e.prenom + " " + e.nom);
         }
+        m_DropOptions = new List<string>();
+        m_DropOptions.Add("nom de l'élève...");
+        m_DropOptions.AddRange( elevesNames);
 
-        m_DropOptions = elevesNames;
+        foreach(string s in ClassroomManager.instance.elevesDejaPlaces)
+        {
+            if (m_DropOptions.Contains(s))
+            {
+                m_DropOptions.Remove(s);
+            }
+        }
+
         //Clear the old options of the Dropdown menu
         drop.ClearOptions();
         //Add the options created in the List above
@@ -80,24 +103,18 @@ public class TableToFillManager : MonoBehaviour
 
 
         Debug.Log("il y a " + drop.options.Count + " dans le drop options");
-        for (int i = 0; i < eleves.Count; i++)
-        {
-            Debug.Log("seeting Picture of " + eleves[i].nom);
-            eleves[i].SetPicture();
-            drop.options[i].image = eleves[i].photo;
-            if (!string.IsNullOrEmpty(eleves[i].photoPath))
-            {
-                byte[] b = File.ReadAllBytes(eleves[i].photoPath);
-                Texture2D tex = new Texture2D(2, 2);
-                tex.LoadImage(b);
-                byte[] pngByte = tex.EncodeToPNG();
-                drop.options[i].image = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
-            }
-        }
+        //for (int i = 0; i < eleves.Count; i++)
+        //{
+        //    Debug.Log("setting Picture of " + eleves[i].nom);
+        //    eleves[i].SetPicture();
+        //    drop.options[i].image = ConvertStringToSprite( eleves[i].photoPath);
+
+        //}
 
     }
     public void SetElevePlace()
     {
+        ClearTable();
         string choosenEleve = m_Dropdown.gameObject.GetComponentInChildren<TextMeshProUGUI>().text;
 
         Eleve currentEleve = GameManager.instance.eleves.Find(Eleve => Eleve.prenom + " " + Eleve.nom == choosenEleve);
@@ -126,17 +143,70 @@ public class TableToFillManager : MonoBehaviour
 
             GameObject eleveButton = Instantiate(eleveButtonPrefab, currentTransform);
             UIController.instance.DeleteFromLeftSide(currentEleve.prenom + " " + currentEleve.nom);
+            ClassroomManager.instance.elevesDejaPlaces.Add(currentEleve.prenom + " " + currentEleve.nom);
             eleveButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = currentEleve.prenom + " " + currentEleve.nom;
+
             if (!string.IsNullOrEmpty(currentEleve.photoPath))
             {
+                if(File.Exists(currentEleve.photoPath))
+                {
+                    byte[] b = File.ReadAllBytes(currentEleve.photoPath);
+                    Texture2D tex = new Texture2D(2, 2);
+                    tex.LoadImage(b);
+                    byte[] pngByte = tex.EncodeToPNG();
+                    eleveButton.GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+                }
 
-                byte[] b = File.ReadAllBytes(currentEleve.photoPath);
-                Texture2D tex = new Texture2D(2, 2);
-                tex.LoadImage(b);
-                byte[] pngByte = tex.EncodeToPNG();
-                eleveButton.GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
             }
         }
         LoadAndSaveWithJSON.instance.SaveList();
+    }
+
+    public Sprite ConvertStringToSprite(string s)
+    {
+        if (!string.IsNullOrEmpty(s))
+        {
+            byte[] b = File.ReadAllBytes(s);
+            Texture2D tex = new Texture2D(2, 2);
+            tex.LoadImage(b);
+            byte[] pngByte = tex.EncodeToPNG();
+            Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+            return sprite;
+        }else
+        {
+            return null;
+        }
+
+    }
+
+    public void ClearTable()
+    {
+
+        Debug.Log("Clearing table !");
+
+        if (!isSimple)
+        {
+            foreach (Transform t in rightTransform)
+            {
+                Eleve currentEleve = GameManager.instance.eleves.Find(Eleve => Eleve.prenom + " " + Eleve.nom == t.GetComponentInChildren<TMPro.TextMeshProUGUI>().text);
+                if (currentEleve != null)
+                {
+                    currentEleve.table = 0;
+                }
+                Destroy(t.gameObject);
+
+            }
+        }
+
+        foreach (Transform t in leftTransform)
+        {
+            Eleve currentEleve = GameManager.instance.eleves.Find(Eleve => Eleve.prenom + " " + Eleve.nom == t.GetComponentInChildren<TMPro.TextMeshProUGUI>().text);
+            if (currentEleve != null)
+            {
+                currentEleve.table = 0;
+            }
+            Destroy(t.gameObject);
+
+        }
     }
 }

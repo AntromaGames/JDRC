@@ -68,7 +68,15 @@ public class UserEdit : MonoBehaviour
         {
             user = LoadAndSaveWithJSON.instance.GetUser();
             GameManager.instance.currentUser = user;
-            bienvenueName.text = user.firstName + " " + user.name;
+            if (user.genre == Genre.homme)
+            {
+                bienvenueName.text = "Monsieur" + " " + user.name;
+            }
+            else
+            {
+                bienvenueName.text = "Madame" + " " + user.name;
+            }
+
             StartCoroutine(nextScene());
         }      
     }
@@ -134,7 +142,7 @@ public class UserEdit : MonoBehaviour
             user = new User(u_genre, u_name, u_firstName, u_matiere, u_etablissement);
 
             SaveUserInPlayerPrefs(user);
-           // GameManager.instance.currentUser = user;
+            GameManager.instance.currentUser = user;
             if (u_genre == Genre.femme)
             {
                 bienvenueName.text = "Madame " + u_name;

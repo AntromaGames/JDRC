@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EleveButtonController : MonoBehaviour
 {
@@ -20,5 +21,19 @@ public class EleveButtonController : MonoBehaviour
     }
 
 
+    public void ToggleInteractibility(bool b)
+    {
+        if (b)
+        {
+            GetComponent<Button>().interactable = false;
+            GetComponent<Image>().raycastTarget = false;
+        }
+        else
+        {
+            GetComponent<Button>().interactable = true;
+            GetComponent<Image>().raycastTarget = true;
+        }
+
+    }
 
 }

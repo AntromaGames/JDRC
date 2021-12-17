@@ -708,6 +708,7 @@ MonoBehaviour:
   currentTransform: {fileID: 0}
   rightDrop: {fileID: 0}
   leftDrop: {fileID: 6386635694415674442}
+  dropTrans: {fileID: 0}
   eleveButtonPrefab: {fileID: 2623704199719254662, guid: 975427eb7d9299446b4baaca4945c1d2, type: 3}
   rightBtn: {fileID: 0}
   leftBtn: {fileID: 789997577738930446}
@@ -1525,7 +1526,7 @@ MonoBehaviour:
   m_fontSizeBase: 9.6
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 18
+  m_fontSizeMin: 4
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1

@@ -168,6 +168,7 @@ public class PhotoImporter : MonoBehaviour
 
 
             //string completePath = Path.Combine(path, "\\3A_Eleve_" + i + ".png");
+            if(!Directory.Exists(path))
             Directory.CreateDirectory(path);
 
             string completePath = path + "/" + "_Eleve_" + i + ".png";
@@ -225,17 +226,21 @@ public class PhotoImporter : MonoBehaviour
                     {
                         Debug.Log("photo: " + go.GetComponentInChildren<ChangingName>().photoPath + " ajoutée à  " + e.prenom + " " + e.nom);
                         e.photo = go.GetComponentInChildren<Image>().sprite;
-                        e.photoPath = go.GetComponentInChildren<ChangingName>().photoPath;
+                        string path = Application.dataPath + "/photos/" + classeName+ "/" + e.prenom + " " + e.nom + ".png";
+                        File.Move(go.GetComponentInChildren<ChangingName>().photoPath, path);
+                        e.photoPath = path;
+                        //e.photoPath = go.GetComponentInChildren<ChangingName>().photoPath;
                     }
-
                 }
+
             
         }
-
         foreach(Eleve e in GameManager.instance.eleves)
         {
             e.SetPicture();
         }
 
+        LoadAndSaveWithJSON.instance.SaveList();
     }
+
 }

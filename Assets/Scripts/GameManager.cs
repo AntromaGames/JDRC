@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
             plan = new List<Table>();
         }
 
-        table.index = plan.Count;
+        table.index = plan.Count+1;
         plan.Add(table);
         LoadAndSaveWithJSON.instance.SaveTables(table);
     }

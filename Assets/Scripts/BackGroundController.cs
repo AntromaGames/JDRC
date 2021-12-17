@@ -24,7 +24,7 @@ public class BackGroundController : MonoBehaviour
         SetBackGrounds();
     }
 
-    private void SetBackGrounds()
+    public void SetBackGrounds()
     {
         switch (GameManager.instance.currentUser.matiere)
         {

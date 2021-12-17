@@ -26,12 +26,12 @@ public class ChangingName : MonoBehaviour
     public void SetName()
     {
         GetComponentInChildren<TextMeshProUGUI>().text = m_Dropdown.gameObject.GetComponentInChildren<TextMeshProUGUI>().text;
+        FindObjectOfType<PhotoImporter>().elevesNames.Remove(GetComponentInChildren<TextMeshProUGUI>().text);
     }
 
 
     void Start()
     {
-
         m_DropOptions = FindObjectOfType<PhotoImporter>().elevesNames;
         //Clear the old options of the Dropdown menu
         m_Dropdown.ClearOptions();

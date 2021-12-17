@@ -18,6 +18,7 @@ public class BD_eleve : MonoBehaviour
         photo.sprite = e.photo;
         _prenom.text = e.prenom;
         _nom.text = e.nom;
+        classe.text = e.classe;
         bgnd.color = c;
     }
 

@@ -75,8 +75,8 @@ public class LoadAndSaveWithJSON : MonoBehaviour
                 {
                     user = new User(
                     strArray2[3] == Genre.femme.ToString() ? Genre.femme : Genre.homme,
-                    strArray2[1],
                     strArray2[0],
+                    strArray2[1],
                     strArray2[4],
                     strArray2[2]);
                     Debug.Log("user " + user.name + "chargé");
@@ -314,33 +314,43 @@ public class LoadAndSaveWithJSON : MonoBehaviour
 
                                     Competence nexComp = new Competence(c.title, c.description, c.niveau, 0, c.maxValue);
                                     string goodComp = compString.Find(goodString => goodString.Contains(c.title));
-                                    Debug.Log(goodComp + "est le mot de la competence avant operation");
-                                    goodComp = goodComp.Remove(0,11+c.title.Count());
-                                    Debug.Log(goodComp + "est le mot de la competence ");
-                                    nexComp.value = int.Parse(goodComp);
-                                    eleve.competences.Add(nexComp);
+                                    if (goodComp != null)
+                                    {
+                                        Debug.Log(goodComp + "est le mot de la competence avant operation");
+                                        goodComp = goodComp.Remove(0, 11 + c.title.Count());
+                                        Debug.Log(goodComp + "est le mot de la competence ");
+                                        nexComp.value = int.Parse(goodComp);
+                                        eleve.competences.Add(nexComp);
+                                    }
+
 
                                 }
                                 else if (!eleve.competences.Contains(c))
                                 {
                                     Competence nexComp = new Competence(c.title, c.description, c.niveau, 0, c.maxValue);
                                     string goodComp = compString.Find(goodString => goodString.Contains(c.title));
-                                    Debug.Log(goodComp + "est le mot de la competence avant operation");
-                                    goodComp = goodComp.Remove(0, 11 + c.title.Count());
-                                    Debug.Log(goodComp + "est le mot de la competence ");
-                                    nexComp.value = int.Parse(goodComp);
-                                    eleve.competences.Add(nexComp);
+                                    if (goodComp != null)
+                                    {
+                                        Debug.Log(goodComp + "est le mot de la competence avant operation");
+                                        goodComp = goodComp.Remove(0, 11 + c.title.Count());
+                                        Debug.Log(goodComp + "est le mot de la competence ");
+                                        nexComp.value = int.Parse(goodComp);
+                                        eleve.competences.Add(nexComp);
+                                    }
 
                                 }
                                 else
                                 {
                                     Competence nexComp = new Competence(c.title, c.description, c.niveau, 0, c.maxValue);
                                     string goodComp = compString.Find(goodString => goodString.Contains(c.title));
-                                    Debug.Log(goodComp + "est le mot de la competence avant operation");
-                                    goodComp = goodComp.Remove(0, 11 + c.title.Count());
-                                    Debug.Log(goodComp + "est le mot de la competence ");
-                                    nexComp.value = int.Parse(goodComp);
-                                    eleve.competences.Add(nexComp);
+                                    if (goodComp != null)
+                                    {
+                                        Debug.Log(goodComp + "est le mot de la competence avant operation");
+                                        goodComp = goodComp.Remove(0, 11 + c.title.Count());
+                                        Debug.Log(goodComp + "est le mot de la competence ");
+                                        nexComp.value = int.Parse(goodComp);
+                                        eleve.competences.Add(nexComp);
+                                    }
                                 }
 
                             }
@@ -382,35 +392,49 @@ public class LoadAndSaveWithJSON : MonoBehaviour
 
                                     string goodBool = powerString.Find(goodString => goodString.StartsWith(p.title));
 
+                                    if(goodBool != null)
+                                    {
+                                        var lastWord = goodBool.Split(' ').Last();
+                                        Debug.Log("goodBool string is " + goodBool + " and his boolean is " + lastWord);
 
-                                    var lastWord = goodBool.Split(' ').Last();
-                                    Debug.Log("goodBool string is " + goodBool + " and his boolean is " + lastWord);
+                                        Power newPow = new Power(p.title, p.description, p.level, p.niveau, bool.Parse(lastWord));
+                                        eleve.powers.Add(newPow);
+                                        //eleve.powers.Find(Power => Power.title == p.title).isUsed = bool.Parse(PlayerPrefs.GetString("eleve_" + eleve.id + "_power_isUsed" + p.title));
+                                        //PlayerPrefs.SetString("eleve_" + e.id + "_competence" + c.title, c.title);
+                                        //PlayerPrefs.SetInt("eleve_" + e.id + "_competence_value" + c.title, c.value);
+                                    }
 
-                                    Power newPow = new Power(p.title, p.description, p.level, p.niveau, bool.Parse(lastWord));
-                                    eleve.powers.Add(newPow);
-                                    //eleve.powers.Find(Power => Power.title == p.title).isUsed = bool.Parse(PlayerPrefs.GetString("eleve_" + eleve.id + "_power_isUsed" + p.title));
-                                    //PlayerPrefs.SetString("eleve_" + e.id + "_competence" + c.title, c.title);
-                                    //PlayerPrefs.SetInt("eleve_" + e.id + "_competence_value" + c.title, c.value);
                                 }
                                 else if (!eleve.powers.Contains(p))
                                 {
                                     string goodBool = powerString.Find(goodString => goodString.StartsWith(p.title));
+                                    if (goodBool != null)
+                                    {
+                                        var lastWord = goodBool.Split(' ').Last();
+                                        Debug.Log("goodBool string is " + goodBool + " and his boolean is " + lastWord);
 
-
-                                    var lastWord = goodBool.Split(' ').Last();
-                                    Debug.Log("goodBool string is " + goodBool + " and his boolean is " + lastWord);
-                                    Power newPow = new Power(p.title, p.description, p.level, p.niveau, bool.Parse(lastWord));
-                                    eleve.powers.Add(newPow);
+                                        Power newPow = new Power(p.title, p.description, p.level, p.niveau, bool.Parse(lastWord));
+                                        eleve.powers.Add(newPow);
+                                        //eleve.powers.Find(Power => Power.title == p.title).isUsed = bool.Parse(PlayerPrefs.GetString("eleve_" + eleve.id + "_power_isUsed" + p.title));
+                                        //PlayerPrefs.SetString("eleve_" + e.id + "_competence" + c.title, c.title);
+                                        //PlayerPrefs.SetInt("eleve_" + e.id + "_competence_value" + c.title, c.value);
+                                    }
                                 }
                                 else
                                 {
                                     string goodBool = powerString.Find(goodString => goodString.StartsWith(p.title));
 
+                                    if (goodBool != null)
+                                    {
+                                        var lastWord = goodBool.Split(' ').Last();
+                                        Debug.Log("goodBool string is " + goodBool + " and his boolean is " + lastWord);
 
-                                    var lastWord = goodBool.Split(' ').Last();
-                                    Debug.Log("goodBool string is " + goodBool + " and his boolean is " + lastWord);
-                                    Power newPow = new Power(p.title, p.description, p.level, p.niveau, bool.Parse(lastWord));
-                                    eleve.powers.Add(newPow);
+                                        Power newPow = new Power(p.title, p.description, p.level, p.niveau, bool.Parse(lastWord));
+                                        eleve.powers.Add(newPow);
+                                        //eleve.powers.Find(Power => Power.title == p.title).isUsed = bool.Parse(PlayerPrefs.GetString("eleve_" + eleve.id + "_power_isUsed" + p.title));
+                                        //PlayerPrefs.SetString("eleve_" + e.id + "_competence" + c.title, c.title);
+                                        //PlayerPrefs.SetInt("eleve_" + e.id + "_competence_value" + c.title, c.value);
+                                    }
                                 }
 
                             }
