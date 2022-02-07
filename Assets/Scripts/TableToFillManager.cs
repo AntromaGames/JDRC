@@ -114,7 +114,7 @@ public class TableToFillManager : MonoBehaviour
     }
     public void SetElevePlace()
     {
-        ClearTable();
+        //ClearTable();
         string choosenEleve = m_Dropdown.gameObject.GetComponentInChildren<TextMeshProUGUI>().text;
 
         Eleve currentEleve = GameManager.instance.eleves.Find(Eleve => Eleve.prenom + " " + Eleve.nom == choosenEleve);

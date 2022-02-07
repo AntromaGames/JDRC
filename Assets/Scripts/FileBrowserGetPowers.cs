@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using SimpleFileBrowser;
-using System;
 
 public class FileBrowserGetPowers : MonoBehaviour
 {

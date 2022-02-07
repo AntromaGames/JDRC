@@ -15,6 +15,7 @@ public class Eleve
     public bool isSelected, alreadyDid;
     public Sprite photo;
     public string photoPath;
+    public bool alloPhoto;
     public  List<Competence> competences;
     public  List<Power> powers;
     public ChaiseDirection direction = ChaiseDirection.alone;

@@ -162,5 +162,8 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
+    public void SaveElevesStats()
+    {
+        LoadAndSaveWithJSON.instance.SaveList();
+    }
 }

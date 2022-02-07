@@ -218,15 +218,11 @@ public class EleveCardUIController : MonoBehaviour
 
     public void RefreshUi()
     {
-
-
         xpText.text = eleve.xp.ToString();
         levelText.text = eleve.level.ToString();
         int reste = (eleve.xp % 500);
         LevelprogressionText.text = (reste / 5).ToString();
         levelindicatorSlider.value = (reste/5);
-
-
         //if (eleve.competences != null)
         //{
         //    foreach (Competence c in eleve.competences)
@@ -238,6 +234,31 @@ public class EleveCardUIController : MonoBehaviour
         //    Debug.Log("vous n avez pas encore établi de compétences pour cette classe ");
         //}
     }
+    //public void TogglePhotoPermission()
+    //{
+    //    if (eleve.alloPhoto)
+    //    {
+    //        eleve.alloPhoto = false;
+    //        playerImage.sprite = null;
+
+    //    }
+    //    else
+    //    {
+    //        eleve.alloPhoto = true;
+
+    //        if (File.Exists(eleve.photoPath))
+    //        {
+    //            byte[] b = File.ReadAllBytes(eleve.photoPath);
+    //            Texture2D tex = new Texture2D(2, 2);
+    //            tex.LoadImage(b);
+    //            byte[] pngByte = tex.EncodeToPNG();
+    //            playerImage.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+    //        }
+    //    }
+
+
+    //}
+
 
 
 }
